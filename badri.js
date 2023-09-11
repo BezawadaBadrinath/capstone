@@ -7,7 +7,7 @@ const axios = require('axios');
 
 
 // Initialize Firebase and Firestore
-const serviceAccount = require("./project.json");
+const serviceAccount = require("./king.json");
 initializeApp({
     credential: cert(serviceAccount)
 });
