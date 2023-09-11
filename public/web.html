@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>gt</title>
+    <link rel="stylesheet" href="web.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+</head>
+<body>
+    
+        <nav>
+            <div class="navbar">
+                <p>gt</p>
+                
+            </div>
+            <ul class="icon-links">
+                
+                <li><a href="#main-content" class="nav-link" data-target="main-content">Home</a></li>
+                <li><a href="#" class="nav-link" data-target="news-section">news</a></li>
+                <li><a href="#anime" class="nav-link" data-target="movie-search">anime</a></li>
+                <li><a href="#" class="nav-link" data-target="signup" id="signup-link">Signup</a></li>
+                <li><a href="#" class="nav-link" data-target="login" id="login-link">Login</a></li>
+                
+            </ul>
+                
+                
+            
+            
+            
+            <br>
+            <div id="content">
+                
+                <section id="main-content"> 
+                    <div class="colored-text">
+                        <h1>GOOD MORNING TO EVERY ONE</h1>
+                    <p >WELCOME TO MY WEBSITE</p>
+                    </div>
+                    
+                </section>
+                
+                <section id="news-section">
+                    <div id="news-details-container">
+                        <p></p>
+                    </div>
+
+                </section>
+                <section id="movie-search">
+                    <h1>Movie Search</h1>
+                    <li><input type="text" class="search-input" id="movieInput" placeholder="Search"></li>
+                    <li><button class="search-button">Search</button></li>
+                    <div id="movieDetails"></div>
+                </section>
+                
+                
+                
+                
+                
+                
+                
+            </div>
+        </nav>
+    </body>
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                
+                const navLinks = document.querySelectorAll('.nav-link');
+                const contentSections = document.querySelectorAll('section');
+                const searchButton = document.querySelector('.search-button');
+                const searchInput = document.querySelector('.search-input');
+                const signupLink = document.querySelector('.nav-link[data-target="signup"]');
+                const loginLink = document.querySelector('.nav-link[data-target="login"]');
+                const newsSection = document.getElementById('news-section');
+                const moviesearch = document.getElementById('movie-search');
+            
+                navLinks.forEach(link => {
+                    link.addEventListener('click', e => {
+                        e.preventDefault();
+                        const target = link.getAttribute('data-target');
+                        console.log('Clicked link with target:', target);
+                        contentSections.forEach(section => {
+                            section.style.display = 'none';
+                        });
+                        if (target === 'news-section') {
+                            fetchNewsAndDisplay();
+                        }
+
+                        document.getElementById(target).style.display = 'block';
+                    });
+                });
+            
+                // searchButton.addEventListener('click', function() {
+                //     const searchTerm = searchInput.value.toLowerCase();
+                //     contentSections.forEach(section => {
+                //         const sectionContent = section.textContent.toLowerCase();
+                //         if (sectionContent.includes(searchTerm)) {
+                //             section.style.display = 'block';
+                //         } else {
+                //             section.style.display = 'none';
+                //         }
+                //     });
+                // });
+            
+                signupLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    openPopup('/signup.html', 'Signup', 400, 400); 
+                });
+            
+                loginLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    openPopup('/login.html','login', 400, 400); 
+                });
+                
+            
+                function openPopup(url) {
+                    const popupFeatures = 'width=400,height=400,resizable,scrollbars';
+                    const popupWindow = window.open(url, '_blank', popupFeatures);
+                    popupWindow.focus();
+                }
+                
+                function fetchNewsAndDisplay() {
+    fetch('/getNews')
+        .then(response => response.json())
+        .then(data => {
+            
+            const newsDetailsContainer = document.getElementById('news-details-container');
+                newsDetailsContainer.innerHTML = ''; 
+            data.articles.forEach(article => {
+                const articleElement = document.createElement('div');
+                articleElement.classList.add('article');
+                articleElement.innerHTML = `
+                    <div class="news-image">
+                        <img src="${article.urlToImage}" alt="${article.title}">
+                    </div>
+                    <div class="news-content">
+                        <h3>${article.title}</h3>
+                        <p>${article.description}</p>
+                            <a href="${article.url}" target="_blank">Read more</a>
+                            
+                    </div>
+                `;
+                newsDetailsContainer.appendChild(articleElement);
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+    searchButton.addEventListener('click', function() {
+                
+                const movieTitle = searchInput.value.trim();
+
+                if (movieTitle === '') {
+                    alert('Please enter a movie title.'); 
+                    return;
+                }
+
+                searchMovie(movieTitle); 
+            });
+    function searchMovie() {
+    const apiKey = '3c18d4ae'; 
+    const movieTitle = document.getElementById('movieInput').value;
+
+    
+    fetch(`https://www.omdbapi.com/?t=${encodeURIComponent(movieTitle)}&apikey=${apiKey}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.Response === "True") {
+                const movieDetails = document.getElementById('movieDetails');
+                movieDetails.innerHTML = `
+                    <h2>${data.Title}</h2>
+                    <p>Year: ${data.Year}</p>
+                    <p>Genre: ${data.Genre}</p>
+                    <p>Plot: ${data.Plot}</p>
+                    <img src="${data.Poster}" alt="${data.Title} Poster">
+                `;
+            } else {
+                const movieDetails = document.getElementById('movieDetails');
+                movieDetails.innerHTML = `<p>Movie not found</p>`;
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+}
+
+            });
+            </script>
+</html>
+
+
+
+
+
+
