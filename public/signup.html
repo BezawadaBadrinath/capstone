@@ -117,8 +117,11 @@
                             
                             
                         } else {
-                           
-                            alert('Signup failed');
+                            if (data.message === "Email already exists") {
+                                alert('Email already exists');
+                            } else {
+                                alert('Signup failed');
+                            }
                         }
                     })
                     .catch(error => {

@@ -54,7 +54,9 @@
                 </section>
                 
                 
-                
+                <div id="logout-button-container">
+                    <button id="logout-button">Logout</button>
+                </div>
                 
                 
                 
@@ -73,7 +75,7 @@
                 const loginLink = document.querySelector('.nav-link[data-target="login"]');
                 const newsSection = document.getElementById('news-section');
                 const moviesearch = document.getElementById('movie-search');
-            
+                const logoutButton = document.getElementById('logout-button');
                 navLinks.forEach(link => {
                     link.addEventListener('click', e => {
                         e.preventDefault();
@@ -118,7 +120,15 @@
                     const popupWindow = window.open(url, '_blank', popupFeatures);
                     popupWindow.focus();
                 }
+                logoutButton.addEventListener('click', function() {
+            
+                    localStorage.removeItem('loggedIn');
+                    window.location.href = '/login.html';
                 
+                });
+
+
+
                 function fetchNewsAndDisplay() {
     fetch('/getNews')
         .then(response => response.json())
